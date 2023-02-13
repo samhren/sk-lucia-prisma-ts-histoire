@@ -6,7 +6,8 @@
 
 <form method="POST">
 	{#if form?.error}
-		<p>{form?.message}</p>
+		<p>Error Message: {form?.message}</p>
+		<p>Invalid Field: {form?.invalidField}</p>
 	{/if}
 
 	<h2>Register</h2>
@@ -15,7 +16,7 @@
 	<input type="text" id="name" name="name" required />
 
 	<label for="email">Email</label>
-	<input type="email" id="email" name="email" required />
+	<input type="text" id="email" name="email" required />
 
 	<label for="password">Password</label>
 	<input type="password" id="password" name="password" required />

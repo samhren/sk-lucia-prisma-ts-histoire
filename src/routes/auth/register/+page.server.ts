@@ -20,9 +20,36 @@ export const actions: Actions = {
 		>;
 
 		const schema = z.object({
-			name: z.string().min(3).max(255),
-			email: z.string().email().max(255),
-			password: z.string().min(6).max(255)
+			name: z
+				.string({
+					required_error: 'Name is required.'
+				})
+				.min(3, {
+					message: 'Name must be at least 3 characters long.'
+				})
+				.max(255, {
+					message: 'Name must be less than 255 characters long.'
+				}),
+			email: z
+				.string({
+					required_error: 'Email is required.'
+				})
+				.email({
+					message: 'Email is invalid.'
+				})
+				.max(255, {
+					message: 'Email must be less than 255 characters long.'
+				}),
+			password: z
+				.string({
+					required_error: 'Password is required.'
+				})
+				.min(6, {
+					message: 'Password must be at least 6 characters long.'
+				})
+				.max(255, {
+					message: 'Password must be less than 255 characters long.'
+				})
 		});
 
 		// Validate the data
@@ -34,13 +61,16 @@ export const actions: Actions = {
 			});
 		} catch (err) {
 			let message = 'Invalid data.';
+			let invalidField: string | number = '';
 
 			if (err instanceof z.ZodError) {
 				message = err.errors[0].message;
+				invalidField = err.errors[0].path[0];
 			}
 
 			return fail(400, {
 				message,
+				invalidField,
 				error: true
 			});
 		}
@@ -63,12 +93,14 @@ export const actions: Actions = {
 				if (err.message === 'AUTH_DUPLICATE_KEY_ID') {
 					return fail(400, {
 						message: 'Email already in use.',
+						invalidField: 'email',
 						error: true
 					});
 				}
 			}
 			return fail(400, {
 				message: 'An error occurred while creating your account.',
+				invalidField: '',
 				error: true
 			});
 		}
